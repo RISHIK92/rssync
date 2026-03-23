@@ -2,6 +2,7 @@ package rss
 
 import (
 	"encoding/xml"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -44,10 +45,10 @@ func ParseRSSFeed(url string) ([]Item, error) {
 
 	defer response.Body.Close()
 
-	bodyBytes, err1 := io.ReadAll(response.Body)
+	bodyBytes, err := io.ReadAll(response.Body)
 
-	if err1 != nil {
-		return nil, err1
+	if err != nil {
+		return nil, err
 	}
 
 	lastUpdated := state.LastUpdated()
@@ -55,15 +56,31 @@ func ParseRSSFeed(url string) ([]Item, error) {
 	var rss RSS
 	arr := []Item{}
 
-	xml.Unmarshal(bodyBytes, &rss)
+	err = xml.Unmarshal(bodyBytes, &rss)
 
-	for i := 0; i < len(rss.Channel.Items); i++ {
+	if err != nil {
+		return nil, err
+	}
+
+	if len(rss.Channel.Items) == 0 {
+		return arr, nil
+	}
+
+	for i:=range rss.Channel.Items {
 		if formatter(rss.Channel.Items[i].PubDate).Before(formatter(lastUpdated)) {
 			break
 		}
 		arr = append(arr, rss.Channel.Items[i])
 	}
-	state.UpdateLastUpdated(rss.Channel.Items[0].PubDate)
+
+	loc, err := time.LoadLocation("GMT")
+	if err != nil {
+		fmt.Println("Error loading timezone:", err)
+	}
+
+	nowGMT := time.Now().In(loc)
+
+	state.UpdateLastUpdated(nowGMT.Format(time.RFC1123))
 
 	return arr, nil
 }
