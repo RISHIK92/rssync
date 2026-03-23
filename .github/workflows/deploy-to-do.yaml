@@ -19,7 +19,7 @@ jobs:
           script: |
             set -e
 
-            cd /home/rssync
+            cd /root/rssync
 
             echo "Pulling latest changes from GitHub..."
 
