@@ -84,4 +84,3 @@ func ParseRSSFeed(url string) ([]Item, error) {
 
 	return arr, nil
 }
-scxvb n
