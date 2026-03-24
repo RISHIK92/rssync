@@ -15,7 +15,7 @@ func main() {
 		log.Println("Warning: No .env file found. Proceeding with existing environment variables.")
 	}
 
-	url := "https://arpitbhayani.me/rss.xml"
+	var url string = "https://arpitbhayani.me/rss.xml"
 	result, err := rss.ParseRSSFeed(url)
 
 	if len(result)==0 {
