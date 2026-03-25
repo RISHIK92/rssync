@@ -14,17 +14,12 @@ func main() {
 	if err != nil {
 		log.Println("Warning: No .env file found. Proceeding with existing environment variables.")
 	}
-	// TODO: Replace with actual RSS feed URL
-	var url string
-	//TODO: Replace with actual sender email and receiver email(s)
-	var senderEmail string
-	// TODO: Replace with actual receiver email(s)
-	var recieverEmail []string
+
+	url := "https://arpitbhayani.me/rss.xml"
 	result, err := rss.ParseRSSFeed(url)
 
 	if len(result)==0 {
 		fmt.Println("No new items found in the RSS feed.")
-		return
 	}
 
 	if err != nil {
@@ -33,7 +28,7 @@ func main() {
 	
 	for i:=range result {
 		item := result[i]
-		success, err1 := mailer.SendEmail(senderEmail,recieverEmail, item.Title, item.Link, item.PubDate, item.Description)
+		success, err1 := mailer.SendEmail("rishik3555@gmail.com",[]string{"rishik3555@gmail.com"}, item.Title, item.Link, item.PubDate, item.Description)
 		if err1 != nil {
 			fmt.Printf("Error sending email for item %s: %v\n", item.Title, err1)
 			return
